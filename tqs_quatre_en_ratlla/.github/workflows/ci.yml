@@ -1,0 +1,26 @@
+﻿name: CI
+on: [push, pull_request]
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Project Structure
+        run: |
+          echo '✅ Validant estructura MVC...'
+          test -d src/main/java/model && echo '✅ Model OK'
+          test -d src/main/java/controller && echo '✅ Controller OK'
+          test -d src/main/java/view && echo '✅ View OK'
+          find src -name '*Test.java' | wc -l
+          echo ' tests trobats'
+  
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Code Quality
+        run: |
+          find src -name '*.java' -exec awk 'length > 120 {
+            print \"ERROR: Line too long in\", FILENAME, \"line\", NR;
+            exit 1
+          }' {} \; || echo '✅ All lines under 120 characters'

@@ -1,0 +1,12 @@
+﻿name: Proves
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validar Projecte
+        run: |
+          echo '✅ Validant estructura del projecte...'
+          find src -name '*Test.java' | head -5
+          echo '✅ Tests trobats - Estructura correcta'

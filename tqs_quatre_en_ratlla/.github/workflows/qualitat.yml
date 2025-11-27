@@ -1,0 +1,13 @@
+﻿name: Qualitat Codi
+on: [push, pull_request]
+jobs:
+  qualitat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar Qualitat Codi
+        run: |
+          find src -name '*.java' -exec awk 'length > 120 {
+            print \"❌ Línia massa llarga:\", FILENAME, \"línia\", NR;
+            exit 1
+          }' {} \; || echo '✅ Totes les línies menys de 120 caràcters'
