@@ -12,39 +12,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'maven'
           
-      - name: Download and Verify JUnit 5
-        run: |
-          set -euo pipefail
-          echo \"📦 Descarregant JUnit 5 Platform (standalone)...\"
-          # Usar curl amb -f per fallar en errors HTTP, -L per seguir redirects
-          curl -fL -o junit-platform-console-standalone.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.2/junit-platform-console-standalone-1.10.2.jar
-          
-          echo \"🔍 Verificant que el JAR és vàlid...\"
-          ls -la *.jar
-          echo \"Contingut del JAR (primers 20 elements):\"
-          jar -tf junit-platform-console-standalone.jar | head -n 20
-          echo \"---\"
-          
-      - name: Compilar
-        run: |
-          set -euo pipefail
-          echo \"🔨 Compilant amb JUnit al classpath...\"
-          echo \"Classpath: junit-platform-console-standalone.jar\"
-          find . -name '*.java' | sort > sources.txt
-          echo \"Arxius a compilar:\"
-          cat sources.txt
-          mkdir -p target/classes
-          
-          # Incloure el standalone jar perquè javac trobi les classes de JUnit
-          javac -d target/classes -cp \"junit-platform-console-standalone.jar\" @sources.txt
-          echo \"✅ Compilació completada\"
-          
-      - name: Executar tests
-        run: |
-          echo \"🚀 Executant tests...\"
-          java -jar junit-platform-console-standalone.jar \
-            --class-path \"target/classes\" \
-            --scan-class-path \
-            --include-classname=\".*Test\" \
-            --details=tree
+      - name: Executar tests amb Maven
+        run: mvn test
