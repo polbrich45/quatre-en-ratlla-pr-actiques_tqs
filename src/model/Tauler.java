@@ -5,7 +5,7 @@ public class Tauler {
         return 6;  
     }
 	public int getColumnes() {
-        return 0;  
+        return 7;  
     }
 
 }
