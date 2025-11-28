@@ -1,0 +1,44 @@
+﻿name: Proves
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          
+      - name: Download JUnit 5 Dependencies
+        run: |
+          echo \"📦 Descargan JUnit 5 i dependencies...\"
+          wget -O junit-jupiter-api.jar https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-api/5.9.2/junit-jupiter-api-5.9.2.jar
+          wget -O junit-jupiter-engine.jar https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.9.2/junit-jupiter-engine-5.9.2.jar
+          wget -O junit-platform-console-standalone.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.9.2/junit-platform-console-standalone-1.9.2.jar
+          wget -O apiguardian-api.jar https://repo1.maven.org/maven2/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar
+          wget -O opentest4j.jar https://repo1.maven.org/maven2/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar
+          
+      - name: Compile with Packages
+        run: |
+          echo \"🔨 Compilant amb estructura de paquets...\"
+          # Crear directori per clases compilades
+          mkdir -p target/classes
+          # Compilar tots els arxius Java, respetant paquets
+          find src -name \"*.java\" > sources.txt
+          javac -d target/classes -cp \"junit-jupiter-api.jar:apiguardian-api.jar:opentest4j.jar\" @sources.txt
+          echo \"✅ Compilació completada\"
+          
+      - name: Run Tests
+        run: |
+          echo \"🚀 Executant tests...\"
+          # Executar tests desde target/classes amb les dependencies
+          java -jar junit-platform-console-standalone.jar \
+            --class-path \"target/classes:junit-jupiter-api.jar:junit-jupiter-engine.jar:apiguardian-api.jar:opentest4j.jar\" \
+            --scan-class-path \
+            --include-classname=\".*Test\" \
+            --details=tree \
+            --disable-banner

@@ -1,0 +1,23 @@
+﻿name: Qualitat Codi
+on: [push, pull_request]
+jobs:
+  qualitat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar Qualitat Codi
+        run: |
+          # Crear archivo temporal con la lista de archivos
+          find src -name '*.java' > files.txt
+          
+          # Verificar longitud de líneas
+          if awk 'length > 120 {
+            print \"❌ Línia massa llarga: \" FILENAME \" línia \" NR \" (\" length \" caràcters)\";
+            found=1
+          } 
+          END { if (found) exit 1 }' \; then
+            echo \"✅ Totes les línies menys de 120 caràcters\"
+          else
+            echo \"S'han trobat línies massa llargues\"
+            exit 1
+          fi
