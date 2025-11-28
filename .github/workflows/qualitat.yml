@@ -7,20 +7,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verificar Qualitat Codi
         run: |
-          # Verificar si hay archivos Java
-          if find src -name '*.java' | grep -q .; then
-            # Verificar longitud de líneas
-            find src -name '*.java' -exec awk 'length > 120 {
-              print \"❌ Línia massa llarga: \" FILENAME \" línia \" NR \" (\" length \" caràcters)\";
-              found=1
-            } END { if (found) exit 1 }' {} \;
-            if [ $? -eq 0 ]; then
-              echo \"✅ Totes les línies menys de 120 caràcters\"
-            else
-              echo \"S'han trobat línies massa llargues\"
-              exit 1
-            fi
-          else
-            echo \"⚠️ No s'han trobat arxius Java a src/\"
-          fi
-
+          echo "🔍 Cercant arxius Java..."
+          find . -name '*.java' | head -5
+          echo "---"
+          find src -name '*.java' -exec awk 'length > 120 {
+            print "❌ Línia massa llarga: " FILENAME " línia " NR " (" length " caràcters)";
+            found=1
+          } END { if (found) exit 1 }' {} +
