@@ -13,24 +13,28 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           
-      - name: Verificar estructura
-        run: |
-          echo "📁 Estructura del projecte:"
-          find . -name '*.java' -type f
-          echo "---"
-          ls -la
-          
       - name: Download JUnit 5 Dependencies
         run: |
-          echo "📦 Descarregant JUnit 5..."
-          wget -q -O junit-platform-console-standalone.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.9.2/junit-platform-console-standalone-1.9.2.jar
+          echo \"📦 Descarregant JUnit 5 i dependencies...\"
+          wget -q -O junit-jupiter-api.jar https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar
+          wget -q -O junit-jupiter-engine.jar https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar
+          wget -q -O junit-platform-console-standalone.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.2/junit-platform-console-standalone-1.10.2.jar
+          wget -q -O apiguardian-api.jar https://repo1.maven.org/maven2/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar
+          wget -q -O opentest4j.jar https://repo1.maven.org/maven2/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar
           
-      - name: Compilar i executar tests
+      - name: Compilar
         run: |
-          echo "🔨 Compilant..."
+          echo \"🔨 Compilant amb dependencies JUnit...\"
           find . -name '*.java' > sources.txt
-          cat sources.txt
           mkdir -p target/classes
-          javac -d target/classes @sources.txt
-          echo "🚀 Executant tests..."
-          java -jar junit-platform-console-standalone.jar --class-path target/classes --scan-class-path
+          javac -d target/classes -cp \"junit-jupiter-api.jar:apiguardian-api.jar:opentest4j.jar\" @sources.txt
+          echo \"✅ Compilació completada\"
+          
+      - name: Executar tests
+        run: |
+          echo \"🚀 Executant tests...\"
+          java -jar junit-platform-console-standalone.jar \
+            --class-path \"target/classes:junit-jupiter-api.jar:junit-jupiter-engine.jar:apiguardian-api.jar:opentest4j.jar\" \
+            --scan-class-path \
+            --include-classname=\".*Test\" \
+            --details=tree
