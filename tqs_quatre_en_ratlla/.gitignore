@@ -1,1 +1,19 @@
-/bin/
+﻿# Archivos compilados
+bin/
+target/
+*.class
+*.jar
+
+# Archivos temporales
+*.tmp
+*.log
+sources.txt
+files.txt
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.settings/
