@@ -12,5 +12,10 @@ class TaulerTest {
 	        Tauler tauler = new Tauler();
 	        assertEquals(6, tauler.getFiles());
 	    }
+	 @Test
+	 public void testTaulerTe7Columnes() {
+	     Tauler tauler = new Tauler();
+	     assertEquals(7, tauler.getColumnes());  
+	 }
 
 }
